@@ -42,7 +42,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={TabOneScreen} options = {{headerTitle: HomeHeader }} />
+      <Stack.Screen name="ZenChat" component={TabOneScreen} options = {{headerTitle: HomeHeader }} />
       <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: true, headerTitle: ChatRoomHeader, headerBackTitleVisible: false }} />
       {/* <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} /> */}
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
@@ -72,7 +72,7 @@ function BottomTabNavigator() {
         name="TabOne"
         component={TabOneScreen}
         options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One ',
+          title: 'Tab One',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Pressable
