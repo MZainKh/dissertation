@@ -9,11 +9,18 @@
       "UnauthRoleName": "amplify-zenchatdissertation-staging-152107-unauthRole",
       "StackName": "amplify-zenchatdissertation-staging-152107",
       "StackId": "arn:aws:cloudformation:us-east-1:351838138915:stack/amplify-zenchatdissertation-staging-152107/d85a6d40-b8e1-11ec-8f62-1249c47aef53",
-      "AmplifyAppId": "d2pqhs2gpfwmkr"
+      "AmplifyAppId": "d2pqhs2gpfwmkr",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-zenchatdissertation-staging-152107-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
       "auth": {
         "ZenChatDissertation": {}
+      },
+      "function": {
+        "ZenChatDissertationPostConfirmation": {
+          "deploymentBucketName": "amplify-zenchatdissertation-staging-152107-deployment",
+          "s3Key": "amplify-builds/ZenChatDissertationPostConfirmation-65416837725146485230-build.zip"
+        }
       }
     }
   }
