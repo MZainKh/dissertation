@@ -14,7 +14,7 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/HomeScreen';
+import HomeScreen from '../screens/HomeScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
@@ -22,6 +22,7 @@ import LinkingConfiguration from './LinkingConfiguration';
 import ChatScreen from '../screens/ChatScreen';
 import HomeHeader from '../components/HomeHeader';
 import ChatRoomHeader from '../components/ChatRoomHeader';
+import UsersListScreen from '../screens/UsersListScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -42,8 +43,9 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 function RootNavigator() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="ZenChat" component={TabOneScreen} options = {{headerTitle: HomeHeader }} />
+      <Stack.Screen name="ZenChat" component={HomeScreen} options = {{headerTitle: HomeHeader }} />
       <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: true, headerTitle: ChatRoomHeader, headerBackTitleVisible: false }} />
+      <Stack.Screen name="UsersList" component={UsersListScreen} options={{ title: "Users List" }} />
       {/* <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} /> */}
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>

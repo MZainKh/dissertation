@@ -1,9 +1,12 @@
-import { View, Text, Image, useWindowDimensions } from 'react-native';
+import { View, Text, Image, useWindowDimensions, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
+import { useNavigation } from '@react-navigation/core';
 
 const HomeHeader = (props) => {
     const { width } = useWindowDimensions();
+    
+    const nav = useNavigation();
 
     return (
         <View style = {{flexDirection: 'row', justifyContent: 'space-between', width, padding: 10, alignItems: 'center'}}>
@@ -14,7 +17,9 @@ const HomeHeader = (props) => {
             <Text style = {{color: 'white', fontWeight: 'bold', textAlign: 'center', marginLeft: 20}}>ZenChat</Text>
             <View style = {{flexDirection: 'row', padding: 10}}>
                 <Feather name="camera" size={20} color="white" style = {{marginHorizontal: 5}} />
-                <Feather name="edit-2" size={20} color="white" style = {{marginHorizontal: 5}} />
+                <Pressable onPress = {() => nav.navigate('UsersList')}>
+                    <Feather name="edit-2" size={20} color="white" style = {{marginHorizontal: 5}} />
+                </Pressable>
             </View>
         </View>
     )
