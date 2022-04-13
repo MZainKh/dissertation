@@ -3,8 +3,8 @@
   "cognitoConfig": {
     "identityPoolName": "testAuthIdentityPool",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "zencha28ffe71a",
-    "userPoolName": "ZenChatDissertation",
+    "resourceNameTruncated": "zenchac5fb105e",
+    "userPoolName": "ZenChat",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -30,10 +30,10 @@
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [],
     "userpoolClientReadAttributes": [],
-    "userpoolClientLambdaRole": "ZenCha28ffe71a_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "ZenChac5fb105e_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "28ffe71a",
-    "resourceName": "ZenChatDissertation",
+    "sharedId": "c5fb105e",
+    "resourceName": "ZenChat",
     "authSelections": "identityPoolAndUserPool",
     "serviceName": "Cognito",
     "usernameAttributes": [
@@ -46,41 +46,6 @@
     "thirdPartyAuth": false,
     "authProviders": [],
     "usernameCaseSensitive": false,
-    "useEnabledMfas": true,
-    "authRoleArn": {
-      "Fn::GetAtt": [
-        "AuthRole",
-        "Arn"
-      ]
-    },
-    "unauthRoleArn": {
-      "Fn::GetAtt": [
-        "UnauthRole",
-        "Arn"
-      ]
-    },
-    "breakCircularDependency": true,
-    "dependsOn": [
-      {
-        "category": "function",
-        "resourceName": "ZenChatDissertationPostConfirmation",
-        "triggerProvider": "Cognito",
-        "attributes": [
-          "Arn",
-          "Name"
-        ]
-      }
-    ],
-    "triggers": {
-      "PostConfirmation": [
-        "custom"
-      ]
-    },
-    "hostedUI": false,
-    "parentStack": {
-      "Ref": "AWS::StackId"
-    },
-    "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"ZenChatDissertationPostConfirmation\"\n  }\n]",
-    "permissions": []
+    "useEnabledMfas": true
   }
 }

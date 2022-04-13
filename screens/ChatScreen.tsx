@@ -15,7 +15,7 @@ export default function ChatScreen() {
         <SafeAreaView style = {styles.page}>
             <FlatList
                 data = {chatData.messages}
-                renderItem = {({ item: chatData }) => <ChatMessage message = {chatData} />} 
+                renderItem = {({ item }) => <ChatMessage message = {item} />} 
                 inverted
             />
             <ChatMessageInput />

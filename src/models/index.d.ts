@@ -4,65 +4,65 @@ import { ModelInit, MutableModel, PersistentModelConstructor } from "@aws-amplif
 
 
 
-type ChatMessagesMetaData = {
+type MessageMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type ChatRoomsMetaData = {
+type ChatRoomMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type UsersMetaData = {
+type UserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-type ChatRoomsUsersMetaData = {
+type ChatRoomUserMetaData = {
   readOnlyFields: 'createdAt' | 'updatedAt';
 }
 
-export declare class ChatMessages {
+export declare class Message {
   readonly id: string;
   readonly content: string;
-  readonly usersID: string;
-  readonly chatRoomsID: string;
+  readonly userID: string;
+  readonly chatroomID: string;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<ChatMessages, ChatMessagesMetaData>);
-  static copyOf(source: ChatMessages, mutator: (draft: MutableModel<ChatMessages, ChatMessagesMetaData>) => MutableModel<ChatMessages, ChatMessagesMetaData> | void): ChatMessages;
+  constructor(init: ModelInit<Message, MessageMetaData>);
+  static copyOf(source: Message, mutator: (draft: MutableModel<Message, MessageMetaData>) => MutableModel<Message, MessageMetaData> | void): Message;
 }
 
-export declare class ChatRooms {
+export declare class ChatRoom {
   readonly id: string;
   readonly newMessages?: number | null;
-  readonly lastMessage?: ChatMessages | null;
-  readonly chatMessages?: (ChatMessages | null)[] | null;
-  readonly chatUsers?: (ChatRoomsUsers | null)[] | null;
+  readonly LastMessage?: Message | null;
+  readonly Messages?: (Message | null)[] | null;
+  readonly ChatUsers?: (ChatRoomUser | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  readonly chatRoomsLastMessageId?: string | null;
-  constructor(init: ModelInit<ChatRooms, ChatRoomsMetaData>);
-  static copyOf(source: ChatRooms, mutator: (draft: MutableModel<ChatRooms, ChatRoomsMetaData>) => MutableModel<ChatRooms, ChatRoomsMetaData> | void): ChatRooms;
+  readonly chatRoomLastMessageId?: string | null;
+  constructor(init: ModelInit<ChatRoom, ChatRoomMetaData>);
+  static copyOf(source: ChatRoom, mutator: (draft: MutableModel<ChatRoom, ChatRoomMetaData>) => MutableModel<ChatRoom, ChatRoomMetaData> | void): ChatRoom;
 }
 
-export declare class Users {
+export declare class User {
   readonly id: string;
   readonly name: string;
   readonly imageUri?: string | null;
   readonly status?: string | null;
-  readonly chatMessages?: (ChatMessages | null)[] | null;
-  readonly chatRooms?: (ChatRoomsUsers | null)[] | null;
+  readonly Messages?: (Message | null)[] | null;
+  readonly chatrooms?: (ChatRoomUser | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<Users, UsersMetaData>);
-  static copyOf(source: Users, mutator: (draft: MutableModel<Users, UsersMetaData>) => MutableModel<Users, UsersMetaData> | void): Users;
+  constructor(init: ModelInit<User, UserMetaData>);
+  static copyOf(source: User, mutator: (draft: MutableModel<User, UserMetaData>) => MutableModel<User, UserMetaData> | void): User;
 }
 
-export declare class ChatRoomsUsers {
+export declare class ChatRoomUser {
   readonly id: string;
-  readonly chatRooms: ChatRooms;
-  readonly users: Users;
+  readonly chatRoom: ChatRoom;
+  readonly user: User;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
-  constructor(init: ModelInit<ChatRoomsUsers, ChatRoomsUsersMetaData>);
-  static copyOf(source: ChatRoomsUsers, mutator: (draft: MutableModel<ChatRoomsUsers, ChatRoomsUsersMetaData>) => MutableModel<ChatRoomsUsers, ChatRoomsUsersMetaData> | void): ChatRoomsUsers;
+  constructor(init: ModelInit<ChatRoomUser, ChatRoomUserMetaData>);
+  static copyOf(source: ChatRoomUser, mutator: (draft: MutableModel<ChatRoomUser, ChatRoomUserMetaData>) => MutableModel<ChatRoomUser, ChatRoomUserMetaData> | void): ChatRoomUser;
 }
