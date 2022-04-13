@@ -9,11 +9,18 @@
       "UnauthRoleName": "amplify-zenchat-staging-193547-unauthRole",
       "StackName": "amplify-zenchat-staging-193547",
       "StackId": "arn:aws:cloudformation:us-east-1:351838138915:stack/amplify-zenchat-staging-193547/eaf2d4c0-bb60-11ec-9aa3-120f8414fb73",
-      "AmplifyAppId": "d2if3dhd8xen6n"
+      "AmplifyAppId": "d2if3dhd8xen6n",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-zenchat-staging-193547-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
       "auth": {
         "ZenChat": {}
+      },
+      "function": {
+        "ZenChatPostConfirmation": {
+          "deploymentBucketName": "amplify-zenchat-staging-193547-deployment",
+          "s3Key": "amplify-builds/ZenChatPostConfirmation-39587977436d577a5270-build.zip"
+        }
       }
     }
   }
