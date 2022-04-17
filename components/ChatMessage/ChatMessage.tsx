@@ -1,16 +1,39 @@
-import { View, Text, StyleSheet } from 'react-native';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { DataStore } from '@aws-amplify/datastore';
+import { User } from '../../src/models';
+import { Auth } from 'aws-amplify';
 
 const myID = 'u1';
 
 const ChatMessage = ({ message }) => {
-    const isMyMsg = message.user.id == myID;
+    const [user, setUser] = useState<User|undefined>();
+    const [me, setMe] = useState<boolean>(false); 
+
+    useEffect(() => {
+        DataStore.query(User, message.userID).then(setUser);
+    }, []);
+
+    useEffect(() => {
+        const ifMe = async () => {
+            if(!user) {
+                return;
+            }
+            const currAuthUser = await Auth.currentAuthenticatedUser();
+            setMe(user.id == currAuthUser.attributes.sub);
+        };
+        ifMe();
+    }, [user]);
+
+    if(!user) {
+        return <ActivityIndicator />
+    }
 
     return (
         <View style = {[
-            styles.container, isMyMsg ? styles.sentContainer : styles.rcvdContainer
+            styles.container, me ? styles.sentContainer : styles.rcvdContainer
         ]}>
-        <Text style = {{color: isMyMsg ? 'black' : 'white'}}>{message.content}</Text>
+        <Text style = {{color: me ? 'black' : 'white'}}>{message.content}</Text>
         </View>
     )
 }

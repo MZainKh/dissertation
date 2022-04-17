@@ -1,18 +1,35 @@
-import { View, Text, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
-import { FontAwesome5, Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
+import { View, Text, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
+import { DataStore } from '@aws-amplify/datastore';
+import { Auth } from 'aws-amplify';
+import { Message } from '../../src/models';
+import { FontAwesome5, Feather } from '@expo/vector-icons';
+import { ChatRoom } from '../../src/models';
 
-const ChatMessageInput = () => {
+
+const ChatMessageInput = ({ chatRoom }) => {
     const [message, setMessage] = useState('');
 
-    const sendMessage = () => {
-        console.warn("sending: ", message);
+    const sendMessage = async () => {
+        const currUser = await Auth.currentAuthenticatedUser(); 
+        const newMessage = await DataStore.save(new Message({
+            content: message,
+            userID: currUser.attributes.sub,
+            chatroomID: chatRoom.id,
+        }));
+        lastMessageUpdate(newMessage);
         setMessage('');
-    }
+    };
+
+    const lastMessageUpdate = async (newMessage) => {
+        DataStore.save(ChatRoom.copyOf(chatRoom, chatRoomUpdated => {
+            chatRoomUpdated.LastMessage = newMessage;
+        }));
+    };
 
     const onPlusClicked = () => {
         console.warn("Plus Clicked");
-    }
+    };
 
     const onClick = () => {
         if (message) {
@@ -20,7 +37,7 @@ const ChatMessageInput = () => {
         } else {
             onPlusClicked();
         }
-    }
+    };
 
     return (
         <KeyboardAvoidingView 
