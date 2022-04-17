@@ -3,15 +3,15 @@
   "modules": [
     "custom"
   ],
-  "parentResource": "ZenChat",
-  "functionName": "ZenChatPostConfirmation",
-  "resourceName": "ZenChatPostConfirmation",
+  "parentResource": "Dissertation",
+  "functionName": "DissertationPostConfirmation",
+  "resourceName": "DissertationPostConfirmation",
   "parentStack": "auth",
   "triggerEnvs": [],
   "triggerDir": "/snapshot/node_modules/@aws-amplify/amplify-category-auth/provider-utils/awscloudformation/triggers/PostConfirmation",
   "triggerTemplate": "PostConfirmation.json.ejs",
   "triggerEventPath": "PostConfirmation.event.json",
-  "roleName": "ZenChatPostConfirmation",
+  "roleName": "DissertationPostConfirmation",
   "skipEdit": true,
   "enableCors": false
 }

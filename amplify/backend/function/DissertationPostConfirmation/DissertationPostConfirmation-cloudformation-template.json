@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"8.0.0\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Linux\",\"createdBy\":\"Amplify\",\"createdWith\":\"8.0.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "GROUP": {
       "Type": "String",
@@ -67,12 +67,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "ZenChatPostConfirmation",
+            "DissertationPostConfirmation",
             {
               "Fn::Join": [
                 "",
                 [
-                  "ZenChatPostConfirmation",
+                  "DissertationPostConfirmation",
                   "-",
                   {
                     "Ref": "env"
@@ -122,12 +122,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "ZenChatPostConfirmation",
+            "DissertationPostConfirmation",
             {
               "Fn::Join": [
                 "",
                 [
-                  "ZenChatPostConfirmation",
+                  "DissertationPostConfirmation",
                   "-",
                   {
                     "Ref": "env"

@@ -1,7 +1,7 @@
 import { View, Text, Image, useWindowDimensions, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import React from 'react';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation } from '@react-navigation/native';
 
 const HomeHeader = (props) => {
     const { width } = useWindowDimensions();

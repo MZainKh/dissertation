@@ -36,7 +36,7 @@ export declare class ChatRoom {
   readonly newMessages?: number | null;
   readonly LastMessage?: Message | null;
   readonly Messages?: (Message | null)[] | null;
-  readonly ChatUsers?: (ChatRoomUser | null)[] | null;
+  readonly ChatRoomUsers?: (ChatRoomUser | null)[] | null;
   readonly createdAt?: string | null;
   readonly updatedAt?: string | null;
   readonly chatRoomLastMessageId?: string | null;

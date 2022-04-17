@@ -136,8 +136,8 @@ export const schema = {
                         "associatedWith": "chatroomID"
                     }
                 },
-                "ChatUsers": {
-                    "name": "ChatUsers",
+                "ChatRoomUsers": {
+                    "name": "ChatRoomUsers",
                     "isArray": true,
                     "type": {
                         "model": "ChatRoomUser"
@@ -365,5 +365,5 @@ export const schema = {
     },
     "enums": {},
     "nonModels": {},
-    "version": "df755af34709c3ba615931da66989c38"
+    "version": "2cc477d645c013dd316343f0df268647"
 };

@@ -1,9 +1,9 @@
 {
   "version": 1,
   "serviceConfiguration": {
-    "apiName": "ZenChat",
+    "apiName": "Dissertation",
     "serviceName": "AppSync",
-    "gqlSchemaPath": "/tmp/amplify-8cd9c9dd-79a5-4045-b9dd-093f3b952f19/amplify/backend/api/ZenChat/schema.graphql",
+    "gqlSchemaPath": "/tmp/amplify-f0139dc2-effe-4d8f-b973-28c1b221c518/amplify/backend/api/Dissertation/schema.graphql",
     "defaultAuthType": {
       "mode": "API_KEY",
       "keyDescription": "api key description",
