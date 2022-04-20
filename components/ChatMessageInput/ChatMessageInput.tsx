@@ -5,10 +5,12 @@ import { Auth } from 'aws-amplify';
 import { Message } from '../../src/models';
 import { FontAwesome5, Feather } from '@expo/vector-icons';
 import { ChatRoom } from '../../src/models';
+import EmojiSelector from 'react-native-emoji-selector';
 
 
 const ChatMessageInput = ({ chatRoom }) => {
     const [message, setMessage] = useState('');
+    const [emojiOpen, setEmojiOpen] = useState(false);
 
     const sendMessage = async () => {
         const currUser = await Auth.currentAuthenticatedUser(); 
@@ -19,6 +21,7 @@ const ChatMessageInput = ({ chatRoom }) => {
         }));
         lastMessageUpdate(newMessage);
         setMessage('');
+        setEmojiOpen(false);
     };
 
     const lastMessageUpdate = async (newMessage) => {
@@ -43,30 +46,39 @@ const ChatMessageInput = ({ chatRoom }) => {
         <KeyboardAvoidingView 
             behavior = {Platform.OS == "ios" ? "padding" : "height"} 
             keyboardVerticalOffset = {100}
-            style = {styles.root}
+            style = {[styles.root, {height: emojiOpen ? '50%' : 'auto'}]}
         >
-            <View style = {styles.inContainer}>
-                <FontAwesome5 name="smile-beam" size={20} color="#595959" style = {styles.icon} />
-                <TextInput 
-                    style = {styles.tInput}
-                    value = {message}
-                    onChangeText = {setMessage}
-                    placeholder = "Message..." 
-                />
-                <Feather name="camera" size={20} color="#595959" style = {styles.icon} />
-                <Feather name="mic" size={20} color="#595959" style = {styles.icon} />
+            <View style = {styles.inputRow}>
+                <View style = {styles.inContainer}>
+                    <Pressable onPress = {() => setEmojiOpen((currentValue) => !currentValue)}>
+                        <FontAwesome5 name="smile-beam" size={20} color="#595959" style = {styles.icon} />
+                    </Pressable>
+                    <TextInput 
+                        style = {styles.tInput}
+                        value = {message}
+                        onChangeText = {setMessage}
+                        placeholder = "Message..." 
+                    />
+                    <Feather name="camera" size={20} color="#595959" style = {styles.icon} />
+                    <Feather name="mic" size={20} color="#595959" style = {styles.icon} />
+                </View>
+                <Pressable onPress = {onClick} style = {styles.btnContainer}>
+                    {message ? <Feather name="send" size={20} color="white" /> : <Feather name="plus" size={24} color="white" />}
+                </Pressable>
             </View>
-            <Pressable onPress = {onClick} style = {styles.btnContainer}>
-                {message ? <Feather name="send" size={20} color="white" /> : <Feather name="plus" size={24} color="white" />}
-            </Pressable>
+
+            { emojiOpen &&  (<EmojiSelector onEmojiSelected = {emoji => setMessage(currMsg => currMsg + emoji)} columns = {8} />) }
         </KeyboardAvoidingView>
     )
 }
 
 const styles = StyleSheet.create ({
     root: {
-        flexDirection: 'row',
         padding: 10,
+        height: '50%'
+    },
+    inputRow: {
+        flexDirection: 'row'
     },
     inContainer: {
         backgroundColor: '#f2f2f2',
