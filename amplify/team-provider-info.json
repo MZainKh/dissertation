@@ -19,7 +19,7 @@
       "function": {
         "DissertationPostConfirmation": {
           "deploymentBucketName": "amplify-dissertation-staging-201312-deployment",
-          "s3Key": "amplify-builds/DissertationPostConfirmation-622b4a5933396f79465a-build.zip"
+          "s3Key": "amplify-builds/DissertationPostConfirmation-72534d67785872337658-build.zip"
         }
       }
     }

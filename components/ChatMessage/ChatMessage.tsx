@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { DataStore } from '@aws-amplify/datastore';
 import { User } from '../../src/models';
 import { Auth } from 'aws-amplify';
-
-const myID = 'u1';
+import { S3Image } from 'aws-amplify-react-native';
 
 const ChatMessage = ({ message }) => {
     const [user, setUser] = useState<User|undefined>();
     const [me, setMe] = useState<boolean>(false); 
+
+    const { width } = useWindowDimensions();
 
     useEffect(() => {
         DataStore.query(User, message.userID).then(setUser);
@@ -33,7 +34,8 @@ const ChatMessage = ({ message }) => {
         <View style = {[
             styles.container, me ? styles.sentContainer : styles.rcvdContainer
         ]}>
-        <Text style = {{color: me ? 'black' : 'white'}}>{message.content}</Text>
+            { message.image && <S3Image imgKey = {message.image} style = {{width: width * 0.7, aspectRatio: 4/3, marginBottom: 10}} resizeMode = 'contain' /> }
+            { !!message.content && (<Text style = {{color: me ? 'black' : 'white'}}>{message.content}</Text>) }
         </View>
     )
 }
@@ -43,7 +45,7 @@ const styles = StyleSheet.create ({
         padding: 8,
         margin: 10,
         borderRadius: 15,
-        maxWidth: '65%',
+        maxWidth: '75%',
     },
     rcvdContainer: {
         backgroundColor: '#008080',

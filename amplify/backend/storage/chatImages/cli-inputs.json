@@ -1,0 +1,13 @@
+{
+  "resourceName": "chatImages",
+  "policyUUID": "ecfffacc",
+  "bucketName": "dissertation2d9894bef3cc4e6fb98251c8cbbdece5",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
