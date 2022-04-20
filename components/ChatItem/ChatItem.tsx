@@ -5,6 +5,7 @@ import { DataStore } from '@aws-amplify/datastore';
 import { ChatRoomUser, Message, User } from '../../src/models';
 import styles from './styles';
 import { Auth } from 'aws-amplify';
+import moment from 'moment';
 
 export default function ChatItem({ chatRoom }) {
     const [users, setUsers] = useState<User[]>([]); // all the users in the chatRoom
@@ -38,13 +39,15 @@ export default function ChatItem({ chatRoom }) {
         return <ActivityIndicator />
     }
 
+    const lastMsgTime = moment(lastMsg?.createdAt).from(moment());
+
     return (
       <Pressable onPress = {onClick} style = {styles.container}>
           <Image source = {{uri: user.imageUri}} style = {styles.image}></Image>
           <View style={styles.rContainer}>
               <View style = {styles.row}>
                   <Text style = {styles.name}>{user.name}</Text>
-                  <Text style = {styles.text}>{lastMsg?.createdAt}</Text>
+                  <Text style = {styles.text}>{lastMsgTime}</Text>
               </View>
               <Text numberOfLines = {1} style = {styles.text}>{lastMsg?.content}</Text>
               {!!chatRoom.newMessages ? <View style = {styles.unreadContainer}>

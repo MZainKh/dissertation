@@ -26,6 +26,7 @@
     "aws-amplify-react-native": "^6.0.4",
     "expo": "~44.0.0",
     "expo-asset": "~8.4.6",
+    "expo-av": "~10.2.0",
     "expo-constants": "~13.0.0",
     "expo-font": "~10.0.4",
     "expo-image-picker": "~12.0.1",
@@ -33,6 +34,7 @@
     "expo-splash-screen": "~0.14.0",
     "expo-status-bar": "~1.2.0",
     "expo-web-browser": "~10.1.0",
+    "moment": "^2.29.3",
     "ngrok": "^4.3.1",
     "react": "17.0.1",
     "react-dom": "17.0.1",
@@ -42,8 +44,7 @@
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1",
     "react-native-web": "0.17.1",
-    "uuid": "^8.3.2",
-    "expo-av": "~10.2.0"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
