@@ -55,8 +55,6 @@ export default function ChatScreen() {
         setMessages(gotMessages);
     };
 
-    navigation.setOptions({title: 'Gojo Satoru'})
-
     if(!chatRoom) {
         return <ActivityIndicator />
     }

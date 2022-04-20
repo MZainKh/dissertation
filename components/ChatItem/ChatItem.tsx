@@ -15,10 +15,10 @@ export default function ChatItem({ chatRoom }) {
 
     useEffect(() => {
         const getUsers = async () => {
-            const gotUsers = (await DataStore.query(ChatRoomUser)).filter(ChatRoomUser => ChatRoomUser.chatRoom.id == chatRoom.id).map(ChatRoomUser => ChatRoomUser.user);
+            const gotUsers = (await DataStore.query(ChatRoomUser)).filter(ChatRoomUser => ChatRoomUser.chatRoom.id == chatRoom.id).map((ChatRoomUser) => ChatRoomUser.user);
             setUsers(gotUsers);
             const currAuthUser = await Auth.currentAuthenticatedUser();
-            setUser(gotUsers.find(user => user.id !== currAuthUser.attributes.sub) || null);
+            setUser(gotUsers.find((user) => user.id !== currAuthUser.attributes.sub) || null);
         };
         getUsers();
     }, []);

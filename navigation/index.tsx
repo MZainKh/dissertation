@@ -44,7 +44,11 @@ function RootNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name="ZenChat" component={HomeScreen} options = {{headerTitle: HomeHeader }} />
-      <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: true, headerTitle: ChatRoomHeader, headerBackTitleVisible: false }} />
+      <Stack.Screen name="Chat" component={ChatScreen} options={
+        ({ route }) => ({
+           headerShown: true, headerTitle: () =>  <ChatRoomHeader id = {route.params?.id} />, headerBackTitleVisible: false 
+        })
+      } />
       <Stack.Screen name="UsersList" component={UsersListScreen} options={{ title: "Users List" }} />
       {/* <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} /> */}
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
