@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { DataStore } from '@aws-amplify/datastore';
 import { User } from '../../src/models';
-import { Auth } from 'aws-amplify';
+import { Auth, Storage } from 'aws-amplify';
 import { S3Image } from 'aws-amplify-react-native';
+import MusicPlayer from '../MusicPlayer';
 
 const ChatMessage = ({ message }) => {
     const [user, setUser] = useState<User|undefined>();
     const [me, setMe] = useState<boolean>(false); 
+    const [audioUri, setAudioUri] = useState<any>(null); 
 
     const { width } = useWindowDimensions();
 
@@ -26,15 +28,22 @@ const ChatMessage = ({ message }) => {
         ifMe();
     }, [user]);
 
+    useEffect(() => {
+        if (message.audio) {
+            Storage.get(message.audio).then(setAudioUri);
+        }
+    }, [message]);
+
     if(!user) {
         return <ActivityIndicator />
     }
 
     return (
         <View style = {[
-            styles.container, me ? styles.sentContainer : styles.rcvdContainer
+            styles.container, me ? styles.sentContainer : styles.rcvdContainer, {width: audioUri ? '75%' : 'auto'}
         ]}>
             { message.image && <S3Image imgKey = {message.image} style = {{width: width * 0.7, aspectRatio: 4/3, marginBottom: 10}} resizeMode = 'contain' /> }
+            { audioUri && (<MusicPlayer audioUri = {audioUri} />)}
             { !!message.content && (<Text style = {{color: me ? 'black' : 'white'}}>{message.content}</Text>) }
         </View>
     )

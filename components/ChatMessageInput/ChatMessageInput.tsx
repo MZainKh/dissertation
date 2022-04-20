@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import styles from './styles';
 import { DataStore } from '@aws-amplify/datastore';
 import { Auth, Storage } from 'aws-amplify';
 import { Message } from '../../src/models';
@@ -7,20 +8,25 @@ import { FontAwesome5, Feather } from '@expo/vector-icons';
 import { ChatRoom } from '../../src/models';
 import EmojiSelector from 'react-native-emoji-selector';
 import * as ImagePicker from 'expo-image-picker';
+import { Audio, AVPlaybackStatus } from 'expo-av';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
+import MusicPlayer from '../MusicPlayer';
 
 const ChatMessageInput = ({ chatRoom }) => {
     const [message, setMessage] = useState('');
     const [emojiOpen, setEmojiOpen] = useState(false);
     const [img, setImg] = useState<string|null>(null);
     const [prog, setProg] = useState(0);
-    
+    const [record, setRecord] = useState<Audio.Recording|null>(null);
+    const [audioUri, setAudioUri] = useState<string|null>(null);
+
     useEffect(() => {
         (async () => {
             if (Platform.OS !== "web") {
                 const libResponse = await ImagePicker.requestMediaLibraryPermissionsAsync();
                 const imgResponse = await ImagePicker.requestCameraPermissionsAsync();
+                const audioResponse = await Audio.requestPermissionsAsync();
                 if (libResponse.status !== "granted" || imgResponse.status !== "granted") {
                     alert("Give permission idiot!");
                 }
@@ -34,6 +40,7 @@ const ChatMessageInput = ({ chatRoom }) => {
         setEmojiOpen(false);
         setImg(null);
         setProg(0);
+        setAudioUri(null);
     }
 
     const sendMessage = async () => {
@@ -60,6 +67,8 @@ const ChatMessageInput = ({ chatRoom }) => {
     const onClick = () => {
         if (img) {
             sendImg();
+        } else if (audioUri) {
+            sendAudio();
         } else if (message) {
             sendMessage();
         } else {
@@ -108,7 +117,7 @@ const ChatMessageInput = ({ chatRoom }) => {
             return;
         }
 
-        const imgBlob = await getImgBlob();
+        const imgBlob = await blob(img);
         const { key } = await Storage.put(`${uuidv4()}.png`, imgBlob, {progressCallback});
 
         const currUser = await Auth.currentAuthenticatedUser(); 
@@ -122,13 +131,69 @@ const ChatMessageInput = ({ chatRoom }) => {
         reset();
     };
 
-    const getImgBlob = async () => {
-        if (!img) {
-            return null;
-        }
-        const responseImg = await fetch(img);
+    const blob = async (uri: string) => {
+        const responseImg = await fetch(uri);
         const imgBlob  = await responseImg.blob();
         return imgBlob;
+    }
+
+    // sending the audio
+    const sendAudio = async () => {
+        if (!audioUri) {
+            return;
+        }
+
+        const audioUriSplit = audioUri.split('.');
+        const fileExt = audioUriSplit[audioUriSplit.length - 1];
+        const audioBlob = await blob(audioUri);
+        const { key } = await Storage.put(`${uuidv4()}.${fileExt}`, audioBlob, {});
+
+        const currUser = await Auth.currentAuthenticatedUser(); 
+        const newMessage = await DataStore.save(new Message({
+            content: message,
+            audio: key, 
+            userID: currUser.attributes.sub,
+            chatroomID: chatRoom.id,
+        }));
+        lastMessageUpdate(newMessage);
+        reset();
+    };
+
+    // Start and Stop Recording Audio
+    async function recordingStart() {
+        try {
+            await Audio.setAudioModeAsync({
+                allowsRecordingIOS: true,
+                playsInSilentModeIOS: true
+            });
+            console.log('Recording has now begun');
+            const { recording } = await Audio.Recording.createAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+            setRecord(recording);
+            console.log('Recording is now complete');
+        } catch (e) {
+            console.error('Failed to start recording your voice', e);
+        }
+    }
+
+    async function recordingStop() {
+        console.log('Recording is now being stopped');
+        if (!record) {
+            return;
+        }
+        setRecord(null);
+        await record.stopAndUnloadAsync();
+        
+        // for hearing the recording from speaker in IOS
+        await Audio.setAudioModeAsync({
+            allowsRecordingIOS: false
+        });
+
+        const audioUri = record.getURI();
+        console.log('Recording has now been completed and stored at', audioUri); 
+        if (!audioUri) {
+            return;
+        }
+        setAudioUri(audioUri);
     }
 
     return (
@@ -149,6 +214,8 @@ const ChatMessageInput = ({ chatRoom }) => {
                 </View>
             )}
 
+            { audioUri && (<MusicPlayer audioUri = {audioUri} />)}
+
             <View style = {styles.inputRow}>
                 <View style = {styles.inContainer}>
                     <Pressable onPress = {() => setEmojiOpen((currentValue) => !currentValue)}>
@@ -166,10 +233,12 @@ const ChatMessageInput = ({ chatRoom }) => {
                     <Pressable onPress = {photo}>
                         <Feather name="camera" size={20} color="#595959" style = {styles.icon} />
                     </Pressable>
-                    <Feather name="mic" size={20} color="#595959" style = {styles.icon} />
+                    <Pressable onPressIn = {recordingStart} onPressOut = {recordingStop}>
+                        <Feather name="mic" size={20} color={ record ? "#008080" : "#595959"} style = {styles.icon} />
+                    </Pressable>
                 </View>
                 <Pressable onPress = {onClick} style = {styles.btnContainer}>
-                    {message || img ? <Feather name="send" size={20} color="white" /> : <Feather name="plus" size={24} color="white" />}
+                    {message || img || audioUri ? <Feather name="send" size={20} color="white" /> : <Feather name="plus" size={24} color="white" />}
                 </Pressable>
             </View>
 
@@ -178,58 +247,4 @@ const ChatMessageInput = ({ chatRoom }) => {
     )
 }
 
-const styles = StyleSheet.create ({
-    root: {
-        padding: 10,
-        height: '50%'
-    },
-    inputRow: {
-        flexDirection: 'row'
-    },
-    inContainer: {
-        backgroundColor: '#f2f2f2',
-        flexDirection: 'row',
-        flex: 1,
-        marginRight: 10,
-        borderRadius: 25,
-        borderWidth: 1,
-        borderColor: 'grey',
-        alignItems: 'center',
-        padding: 5
-    },
-    icon: {
-        marginHorizontal: 5
-    },
-    tInput: {
-        flex: 1,
-        marginHorizontal: 5
-    },
-    btnContainer: {
-        width: 40,
-        height: 40,
-        backgroundColor: '#008080',
-        borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    btnText: {
-        color: 'white',
-        fontSize: 35
-    },
-    selectedImgContainer: {
-        flexDirection: 'row',
-        marginVertical: 10,
-        alignSelf: 'stretch',
-        justifyContent: 'space-between',
-        borderWidth: 1,
-        borderColor: 'white',
-        borderRadius: 10
-    },
-    img: {
-        width: 100,
-        height: 100,
-        borderRadius: 10
-    }
-})
-
-export default ChatMessageInput
+export default ChatMessageInput;
