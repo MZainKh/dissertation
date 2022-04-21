@@ -12,8 +12,23 @@ import { withAuthenticator } from 'aws-amplify-react-native';
 import { DataStore } from '@aws-amplify/datastore';
 import { Message, User } from './src/models';
 import moment from 'moment';
+import { ActionSheetProvider } from '@expo/react-native-action-sheet';
+
+import { setPRNG, box } from "tweetnacl";
+import { PRNG, generateKeyPair, encrypt, decrypt } from './utils/crypto';
 
 Amplify.configure(awsconfig);
+
+setPRNG(PRNG);
+
+const obj = { hello: 'world' };
+const pairA = generateKeyPair();
+const pairB = generateKeyPair();
+const sharedA = box.before(pairB.publicKey, pairA.secretKey);
+const sharedB = box.before(pairA.publicKey, pairB.secretKey);
+const encrypted = encrypt(sharedA, obj);
+const decrypted = decrypt(sharedB, encrypted);
+console.log(obj, encrypted, decrypted);
 
 function App() {
   const isLoadingComplete = useCachedResources();
@@ -87,7 +102,9 @@ function App() {
   } else {
     return (
       <SafeAreaProvider>
-        <Navigation colorScheme={colorScheme} />
+        <ActionSheetProvider>
+          <Navigation colorScheme={colorScheme} />
+        </ActionSheetProvider>
         <StatusBar />
       </SafeAreaProvider>
     );

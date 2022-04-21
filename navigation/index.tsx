@@ -23,6 +23,7 @@ import ChatScreen from '../screens/ChatScreen';
 import HomeHeader from '../components/HomeHeader';
 import ChatRoomHeader from '../components/ChatRoomHeader';
 import UsersListScreen from '../screens/UsersListScreen';
+import Settings from '../screens/Settings';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -50,6 +51,7 @@ function RootNavigator() {
         })
       } />
       <Stack.Screen name="UsersList" component={UsersListScreen} options={{ title: "Users List" }} />
+      <Stack.Screen name="Settings" component={Settings} options={{ title: "Settings" }} />
       {/* <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} /> */}
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>

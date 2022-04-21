@@ -59,7 +59,7 @@ export default function ChatScreen() {
     if(!chatRoom) {
         return <ActivityIndicator />
     }
-
+    
     return (
         <SafeAreaView style = {styles.page}>
             <FlatList

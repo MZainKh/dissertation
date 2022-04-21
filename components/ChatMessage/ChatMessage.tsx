@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, useWindowDimensions, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, useWindowDimensions, Pressable, Alert } from 'react-native';
 import { DataStore } from '@aws-amplify/datastore';
 import { User } from '../../src/models';
 import { Auth, Storage } from 'aws-amplify';
@@ -7,6 +7,7 @@ import { S3Image } from 'aws-amplify-react-native';
 import MusicPlayer from '../MusicPlayer';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../../src/models';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import ChatMessageRepliedTo from '../ChatMessageRepliedTo';
 
 const ChatMessage = ( props ) => {
@@ -16,8 +17,10 @@ const ChatMessage = ( props ) => {
     const [audioUri, setAudioUri] = useState<any>(null); 
     const [message, setMsg] = useState<Message>(propMsg);
     const [msgRepliedTo, setMsgRepliedTo] = useState<Message|undefined>();
+    const [deleted, setDeleted] = useState(false);
 
     const { width } = useWindowDimensions();
+    const { showActionSheetWithOptions } = useActionSheet();
 
     useEffect(() => {
         DataStore.query(User, message.userID).then(setUser);
@@ -38,6 +41,8 @@ const ChatMessage = ( props ) => {
         const realTimeSub = DataStore.observe(Message, message.id).subscribe(msg => {
             if(msg.model == Message && msg.opType == "UPDATE") {
                 setMsg((message) => ({...message, ...msg.element}));
+            } else if (msg.opType == "DELETE") {
+                setDeleted(true);
             }
         });
         return () => realTimeSub.unsubscribe();
@@ -72,19 +77,55 @@ const ChatMessage = ( props ) => {
         }
     }, [message]);
 
+    const deleteMsg = async () => {
+        await DataStore.delete(message);
+    }
+
+    const confMsgDelete = () => {
+        Alert.alert("Confirming Destruct", "You sure you wanna delete this?", [
+            {
+                text: "Destroy it",
+                onPress: deleteMsg,
+                style: 'destructive'
+            },
+            {
+                text: "Cancel"
+            }
+        ]);
+    }
+
+    const actionTriggered = (index) => {
+        if (index == 0) {
+            setMsgReply();
+        } else if (index == 1) {
+            if (me) {
+                confMsgDelete();
+            } else {
+                Alert.alert("Cannot do this", "Not your message");
+            }
+        }
+    }
+
+    const actionMenu = () => {
+        const options =  ["Reply", "Delete", "Cancel"];
+        const destructiveButtonIndex = 1;
+        const cancelButtonIndex = 2;
+        showActionSheetWithOptions({options, destructiveButtonIndex, cancelButtonIndex}, actionTriggered);
+    }
+
     if(!user) {
         return <ActivityIndicator />
     }
 
     return (
-        <Pressable onLongPress = {setMsgReply} style = {[
+        <Pressable onLongPress = {actionMenu} style = {[
             styles.container, me ? styles.sentContainer : styles.rcvdContainer, {width: audioUri ? '75%' : 'auto'}
         ]}>
             { msgRepliedTo && (<ChatMessageRepliedTo message = {msgRepliedTo} />) }
             <View style = {styles.rowContainer}>
                 { message.image && <S3Image imgKey = {message.image} style = {{width: width * 0.65, aspectRatio: 4/3, marginBottom: 10}} resizeMode = 'contain' /> }
                 { audioUri && (<MusicPlayer audioUri = {audioUri} />)}
-                { !!message.content && (<Text style = {{color: me ? 'black' : 'white'}}>{message.content}</Text>) }
+                { !!message.content && (<Text style = {{color: me ? 'black' : 'white'}}>{deleted ? "deleted message" : message.content}</Text>) }
                 { me && !!message.status && message.status !== "SENT" && (<Ionicons name={message.status == "DELIVERED" ? "checkmark-outline" : "checkmark-done-outline" } size={16} color="white" style = {{marginHorizontal: 5}} />) }
             </View>
         </Pressable>

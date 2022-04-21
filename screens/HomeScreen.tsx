@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Image, StyleSheet, FlatList, Pressable } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
 import { Auth } from 'aws-amplify';
 import { DataStore } from '@aws-amplify/datastore';
 import { ChatRoom, ChatRoomUser } from '../src/models';
@@ -17,20 +17,12 @@ export default function HomeScreen() {
     getChatRooms();
   }, []);
 
-  const signOut = async () => {
-    await DataStore.clear();
-    Auth.signOut();
-  }
-
   return (
     <View style = {styles.pageList}>
       <FlatList 
         data = {chatRooms}
         renderItem = {({ item: chatItem }) => <ChatItem chatRoom = {chatItem} />}
       />
-      {/* <Pressable onPress = {signOut} style = {{backgroundColor: '#008080', height: 50, margin: 10, borderRadius: 50, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Sign Out</Text>
-      </Pressable> */}
     </View>
   );
 }

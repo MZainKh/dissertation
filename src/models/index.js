@@ -8,12 +8,12 @@ const MessageStatus = {
   "READ": "READ"
 };
 
-const { Message, ChatRoom, User, ChatRoomUser } = initSchema(schema);
+const { Message, User, ChatRoom, ChatRoomUser } = initSchema(schema);
 
 export {
   Message,
-  ChatRoom,
   User,
+  ChatRoom,
   ChatRoomUser,
   MessageStatus
 };

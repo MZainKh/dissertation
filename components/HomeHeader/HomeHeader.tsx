@@ -16,7 +16,9 @@ const HomeHeader = (props) => {
             />
             <Text style = {{color: 'white', fontWeight: 'bold', textAlign: 'center', marginLeft: 20}}>ZenChat</Text>
             <View style = {{flexDirection: 'row', padding: 10}}>
-                <Feather name="camera" size={20} color="white" style = {{marginHorizontal: 5}} />
+                <Pressable onPress = {() => nav.navigate('Settings')}>
+                    <Feather name="settings" size={20} color="white" style = {{marginHorizontal: 5}} />
+                </Pressable>
                 <Pressable onPress = {() => nav.navigate('UsersList')}>
                     <Feather name="edit-2" size={20} color="white" style = {{marginHorizontal: 5}} />
                 </Pressable>
