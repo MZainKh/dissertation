@@ -3,7 +3,7 @@ import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Image
 import styles from './styles';
 import { DataStore } from '@aws-amplify/datastore';
 import { Auth, Storage } from 'aws-amplify';
-import { Message, ChatRoom } from '../../src/models';
+import { Message, ChatRoom, ChatRoomUser } from '../../src/models';
 import { FontAwesome5, Feather } from '@expo/vector-icons';
 import EmojiSelector from 'react-native-emoji-selector';
 import * as ImagePicker from 'expo-image-picker';
@@ -12,6 +12,9 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import MusicPlayer from '../MusicPlayer';
 import ChatMessage from '../ChatMessage/ChatMessage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { PVT_KEY } from '../../screens/Settings';
+
 
 const ChatMessageInput = ({ chatRoom, replyTo, removeReplyTo }) => {
     const [message, setMessage] = useState('');
@@ -43,17 +46,36 @@ const ChatMessageInput = ({ chatRoom, replyTo, removeReplyTo }) => {
         setAudioUri(null);
     }
 
-    const sendMessage = async () => {
-        const currUser = await Auth.currentAuthenticatedUser(); 
+    const sendToUser = async (user, userId) => {
+        const ourSecretKey = await AsyncStorage.getItem('')
+        const keyShared = box.before(user.publicKey, ourSecretKey);
+
         const newMessage = await DataStore.save(new Message({
             content: message,
-            userID: currUser.attributes.sub,
+            userID: userId,
+            forUserId: user.id,
             chatroomID: chatRoom.id,
             status: "SENT",
             replyToMessageID: replyTo?.id
         }));
-        lastMessageUpdate(newMessage);
-        reset();
+        // lastMessageUpdate(newMessage);
+    }
+
+    const sendMessage = async () => {
+        const currUser = await Auth.currentAuthenticatedUser(); 
+        // users in chat room
+        const getUsers = (await DataStore.query(ChatRoomUser)).filter(chatRoomUser => chatRoomUser.chatRoom.id == chatRoom.id).map((chatRoomUser) => chatRoomUser.user);
+
+        await Promise.all(getUsers.map(user => sendToUser(user, currUser.attributes.sub)));
+        // const currUser = await Auth.currentAuthenticatedUser(); 
+        // const newMessage = await DataStore.save(new Message({
+        //     content: message,
+        //     userID: currUser.attributes.sub,
+        //     chatroomID: chatRoom.id,
+        //     status: "SENT",
+        //     replyToMessageID: replyTo?.id
+        // }));
+        // reset();
     };
 
     const lastMessageUpdate = async (newMessage) => {

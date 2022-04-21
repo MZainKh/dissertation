@@ -43,10 +43,10 @@ export default function ChatItem({ chatRoom }) {
 
     return (
       <Pressable onPress = {onClick} style = {styles.container}>
-          <Image source = {{uri: chatRoom.imageUri || user.imageUri}} style = {styles.image}></Image>
+          <Image source = {{uri: chatRoom.imageUri || user?.imageUri}} style = {styles.image}></Image>
           <View style = {[styles.rContainer, {flex: !!chatRoom.newMessages ? 0.9 : 1}]}>
               <View style = {styles.row}>
-                  <Text style = {styles.name}>{chatRoom.name || user.name}</Text>
+                  <Text style = {styles.name}>{chatRoom.name || user?.name}</Text>
                   <Text style = {styles.text}>{lastMsgTime}</Text>
               </View>
               <Text numberOfLines = {1} style = {styles.text}>{lastMsg?.content}</Text>

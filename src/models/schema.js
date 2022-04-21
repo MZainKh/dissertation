@@ -74,6 +74,13 @@ export const schema = {
                         "targetName": "userMessagesId"
                     }
                 },
+                "forUserId": {
+                    "name": "forUserId",
+                    "isArray": false,
+                    "type": "ID",
+                    "isRequired": false,
+                    "attributes": []
+                },
                 "createdAt": {
                     "name": "createdAt",
                     "isArray": false,
@@ -466,5 +473,5 @@ export const schema = {
         }
     },
     "nonModels": {},
-    "version": "69113c36cb42d40c854c8984c35941b5"
+    "version": "72113780d5efc4dfc0a1296c1d15cd93"
 };
