@@ -17,7 +17,8 @@ export default function HomeScreen() {
     getChatRooms();
   }, []);
 
-  const signOut = () => {
+  const signOut = async () => {
+    await DataStore.clear();
     Auth.signOut();
   }
 
