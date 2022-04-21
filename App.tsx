@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -6,17 +6,20 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 
-import { Amplify, Hub } from 'aws-amplify';
+import { Amplify, Auth, Hub } from 'aws-amplify';
 import awsconfig from './src/aws-exports';
 import { withAuthenticator } from 'aws-amplify-react-native';
 import { DataStore } from '@aws-amplify/datastore';
-import { Message } from './src/models';
+import { Message, User } from './src/models';
+import moment from 'moment';
 
 Amplify.configure(awsconfig);
 
 function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
+
+  const [currUser, setCurrUser] = useState<User|null>(null);
 
   useEffect(() => {
     // create listener
@@ -35,6 +38,49 @@ function App() {
     // remove listener
     return () => listener();
   }, []);
+
+
+  useEffect(() => {
+    if (!currUser) {
+      return;
+    }
+    const realTimeSub = DataStore.observe(User, currUser.id).subscribe(msg => {
+        if(msg.model == User && msg.opType == "UPDATE") {
+            setCurrUser(msg.element);
+        }
+    });
+    return () => realTimeSub.unsubscribe();
+  }, [currUser?.id]);
+
+  
+  useEffect(() => {
+    getUser();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      await lastSeenUpdate();
+    }, 1 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [currUser]);
+
+  const getUser = async () => {
+    const authUser = await Auth.currentAuthenticatedUser();
+    const dbUser = await DataStore.query(User, authUser.attributes.sub);
+    if (dbUser) {
+      setCurrUser(dbUser);
+    } 
+  }
+
+  const lastSeenUpdate = async () => {
+    if (!currUser) {
+      return;
+    } 
+    const updatedLastSeen = await DataStore.save(User.copyOf(currUser, (update) => {
+      update.lastSeen = +new Date();
+    }));
+    setCurrUser(updatedLastSeen);
+  }
 
   if (!isLoadingComplete) {
     return null;
