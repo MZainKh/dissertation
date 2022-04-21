@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
       marginRight: 10
     },
     rContainer: {
-      flex: 0.9,
+      flex: 1,
       justifyContent: 'center'
     },
     row: {
@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between'
     },
     name: {
-      fontSize: 18,
-      fontWeight: 'bold',
+      fontSize: 16,
+      // fontWeight: 'bold',
       color: 'white',
     },
     text: {

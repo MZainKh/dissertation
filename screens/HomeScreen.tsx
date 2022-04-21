@@ -27,9 +27,9 @@ export default function HomeScreen() {
         data = {chatRooms}
         renderItem = {({ item: chatItem }) => <ChatItem chatRoom = {chatItem} />}
       />
-      <Pressable onPress = {signOut} style = {{backgroundColor: '#008080', height: 50, margin: 10, borderRadius: 50, alignItems: 'center', justifyContent: 'center'}}>
+      {/* <Pressable onPress = {signOut} style = {{backgroundColor: '#008080', height: 50, margin: 10, borderRadius: 50, alignItems: 'center', justifyContent: 'center'}}>
         <Text>Sign Out</Text>
-      </Pressable>
+      </Pressable> */}
     </View>
   );
 }
