@@ -44,7 +44,7 @@ export default function ChatItem({ chatRoom }) {
     return (
       <Pressable onPress = {onClick} style = {styles.container}>
           <Image source = {{uri: user.imageUri}} style = {styles.image}></Image>
-          <View style={styles.rContainer}>
+          <View style = {[styles.rContainer, {flex: !!chatRoom.newMessages ? 0.9 : 1}]}>
               <View style = {styles.row}>
                   <Text style = {styles.name}>{user.name}</Text>
                   <Text style = {styles.text}>{lastMsgTime}</Text>
