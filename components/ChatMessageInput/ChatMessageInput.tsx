@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import styles from './styles';
 import { DataStore } from '@aws-amplify/datastore';
 import { Auth, Storage } from 'aws-amplify';
@@ -49,6 +49,7 @@ const ChatMessageInput = ({ chatRoom }) => {
             content: message,
             userID: currUser.attributes.sub,
             chatroomID: chatRoom.id,
+            status: "SENT"
         }));
         lastMessageUpdate(newMessage);
         reset();

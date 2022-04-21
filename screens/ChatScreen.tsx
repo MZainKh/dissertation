@@ -26,7 +26,7 @@ export default function ChatScreen() {
         const realTimeSub = DataStore.observe(Message).subscribe(msg => {
             console.log(msg.model, msg.opType, msg.element);
             if(msg.model == Message && msg.opType == "INSERT") {
-                setMessages(existingMessages => [msg.element, ...existingMessages]);
+                setMessages((existingMessages) => [msg.element, ...existingMessages]);
             }
         });
         return () => realTimeSub.unsubscribe();
