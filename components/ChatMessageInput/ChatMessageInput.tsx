@@ -3,17 +3,17 @@ import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Image
 import styles from './styles';
 import { DataStore } from '@aws-amplify/datastore';
 import { Auth, Storage } from 'aws-amplify';
-import { Message } from '../../src/models';
+import { Message, ChatRoom } from '../../src/models';
 import { FontAwesome5, Feather } from '@expo/vector-icons';
-import { ChatRoom } from '../../src/models';
 import EmojiSelector from 'react-native-emoji-selector';
 import * as ImagePicker from 'expo-image-picker';
-import { Audio, AVPlaybackStatus } from 'expo-av';
+import { Audio } from 'expo-av';
 import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import MusicPlayer from '../MusicPlayer';
+import ChatMessage from '../ChatMessage/ChatMessage';
 
-const ChatMessageInput = ({ chatRoom }) => {
+const ChatMessageInput = ({ chatRoom, replyTo, removeReplyTo }) => {
     const [message, setMessage] = useState('');
     const [emojiOpen, setEmojiOpen] = useState(false);
     const [img, setImg] = useState<string|null>(null);
@@ -49,7 +49,8 @@ const ChatMessageInput = ({ chatRoom }) => {
             content: message,
             userID: currUser.attributes.sub,
             chatroomID: chatRoom.id,
-            status: "SENT"
+            status: "SENT",
+            replyToMessageID: replyTo?.id
         }));
         lastMessageUpdate(newMessage);
         reset();
@@ -127,6 +128,8 @@ const ChatMessageInput = ({ chatRoom }) => {
             image: key, 
             userID: currUser.attributes.sub,
             chatroomID: chatRoom.id,
+            status: "SENT",
+            replyToMessageID: replyTo?.id
         }));
         lastMessageUpdate(newMessage);
         reset();
@@ -155,6 +158,8 @@ const ChatMessageInput = ({ chatRoom }) => {
             audio: key, 
             userID: currUser.attributes.sub,
             chatroomID: chatRoom.id,
+            status: "SENT",
+            replyToMessageID: replyTo?.id
         }));
         lastMessageUpdate(newMessage);
         reset();
@@ -203,6 +208,16 @@ const ChatMessageInput = ({ chatRoom }) => {
             keyboardVerticalOffset = {100}
             style = {[styles.root, {height: emojiOpen ? '50%' : 'auto'}]}
         >
+            { replyTo && (
+                <View style = {{backgroundColor: '#1d1d1d', padding: 5, borderRadius: 10, flexDirection: 'row', alignItems: 'center', margin: 5}}>
+                    <Text style = {{color: 'white'}}>Replying to:</Text>
+                    <ChatMessage message = {replyTo} />
+                    <Pressable onPress = {() => removeReplyTo()}>
+                        <Feather name="x" size={25} color="#595959" style = {{margin: 5}} />
+                    </Pressable>
+                </View>
+            )}
+
             {img && (
                 <View style = {styles.selectedImgContainer}>
                     <Image source = {{uri: img}} style = {styles.img} />

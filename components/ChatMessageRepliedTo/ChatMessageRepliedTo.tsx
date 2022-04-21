@@ -7,15 +7,13 @@ import { S3Image } from 'aws-amplify-react-native';
 import MusicPlayer from '../MusicPlayer';
 import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../../src/models';
-import ChatMessageRepliedTo from '../ChatMessageRepliedTo';
 
 const ChatMessage = ( props ) => {
-    const { setMsgReply, message: propMsg } = props;
+    const { message: propMsg } = props;
     const [user, setUser] = useState<User|undefined>();
     const [me, setMe] = useState<boolean|null>(null); 
     const [audioUri, setAudioUri] = useState<any>(null); 
     const [message, setMsg] = useState<Message>(propMsg);
-    const [msgRepliedTo, setMsgRepliedTo] = useState<Message|undefined>();
 
     const { width } = useWindowDimensions();
 
@@ -26,34 +24,6 @@ const ChatMessage = ( props ) => {
     useEffect(() => {
         setMsg(propMsg);
     }, [propMsg]);
-
-    useEffect(() => {
-        if (message?.replyToMessageID) {
-            DataStore.query(Message, message.replyToMessageID).then(setMsgRepliedTo);
-        }
-    }, [message]);
-
-
-    useEffect(() => {
-        const realTimeSub = DataStore.observe(Message, message.id).subscribe(msg => {
-            if(msg.model == Message && msg.opType == "UPDATE") {
-                setMsg((message) => ({...message, ...msg.element}));
-            }
-        });
-        return () => realTimeSub.unsubscribe();
-    }, []);
-
-    const setMsgRead = async () => {
-        if (me == false && message.status !== "READ") {
-            await DataStore.save(Message.copyOf(message, (updateStatus) => {
-                updateStatus.status = "READ";
-            }));
-        }
-    }
-
-    useEffect(() => {
-        setMsgRead();
-    }, [me, message]);
 
     useEffect(() => {
         const ifMe = async () => {
@@ -77,17 +47,16 @@ const ChatMessage = ( props ) => {
     }
 
     return (
-        <Pressable onLongPress = {setMsgReply} style = {[
+        <View style = {[
             styles.container, me ? styles.sentContainer : styles.rcvdContainer, {width: audioUri ? '75%' : 'auto'}
         ]}>
-            { msgRepliedTo && (<ChatMessageRepliedTo message = {msgRepliedTo} />) }
             <View style = {styles.rowContainer}>
                 { message.image && <S3Image imgKey = {message.image} style = {{width: width * 0.65, aspectRatio: 4/3, marginBottom: 10}} resizeMode = 'contain' /> }
                 { audioUri && (<MusicPlayer audioUri = {audioUri} />)}
                 { !!message.content && (<Text style = {{color: me ? 'black' : 'white'}}>{message.content}</Text>) }
                 { me && !!message.status && message.status !== "SENT" && (<Ionicons name={message.status == "DELIVERED" ? "checkmark-outline" : "checkmark-done-outline" } size={16} color="white" style = {{marginHorizontal: 5}} />) }
             </View>
-        </Pressable>
+        </View>
     )
 }
 
