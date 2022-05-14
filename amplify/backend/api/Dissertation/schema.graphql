@@ -13,8 +13,7 @@ type Message @model @auth(rules: [{allow: public}]) {
   audio: String
   status: MessageStatus
   replyToMessageID: ID
-  ForUser: User @belongsTo
-  forUserId: ID
+  forUserID: ID
 }
 
 type ChatRoom @model @auth(rules: [{allow: public}]) {
@@ -36,6 +35,6 @@ type User @model @auth(rules: [{allow: public}]) {
   Messages: [Message] @hasMany(indexName: "byUser", fields: ["id"])
   chatrooms: [ChatRoom] @manyToMany(relationName: "ChatRoomUser")
   lastSeen: AWSTimestamp
-  publicKey: String!
+  publicKey: String
 }
  

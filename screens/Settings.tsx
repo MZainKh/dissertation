@@ -6,7 +6,7 @@ import { generateKeyPair } from '../utils/crypto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from '../src/models';
 
-export const PVT_KEY = "PVT_KEY";
+export const PVT_KEY = "PRIVATE_KEY";
 
 const Settings = () => {
     // sign out function

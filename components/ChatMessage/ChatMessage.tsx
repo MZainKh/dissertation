@@ -9,6 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Message } from '../../src/models';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import ChatMessageRepliedTo from '../ChatMessageRepliedTo';
+import { box } from 'tweetnacl';
+import { decrypt, mySecretKey, strToUint8Array } from '../../utils/crypto';
 
 const ChatMessage = ( props ) => {
     const { setMsgReply, message: propMsg } = props;
@@ -16,6 +18,7 @@ const ChatMessage = ( props ) => {
     const [me, setMe] = useState<boolean|null>(null); 
     const [audioUri, setAudioUri] = useState<any>(null); 
     const [message, setMsg] = useState<Message>(propMsg);
+    const [decMsg, setDecMsg] = useState('');
     const [msgRepliedTo, setMsgRepliedTo] = useState<Message|undefined>();
     const [deleted, setDeleted] = useState(false);
 
@@ -77,6 +80,24 @@ const ChatMessage = ( props ) => {
         }
     }, [message]);
 
+    // decrypting the message
+    useEffect(() => {
+        if(!message?.content || !user?.publicKey) {
+            return;
+        }
+        const decMessage = async () => {
+            const userPubKey = strToUint8Array(user?.publicKey);
+            const mySecKey = await mySecretKey();
+            if (!mySecKey) {
+                return;
+            }
+            const shared = box.before(userPubKey, mySecKey);
+            const dec = decrypt(shared, message.content);
+            setDecMsg(dec.message)
+        }
+        decMessage();
+    }, [message, user]);
+
     const deleteMsg = async () => {
         await DataStore.delete(message);
     }
@@ -125,7 +146,7 @@ const ChatMessage = ( props ) => {
             <View style = {styles.rowContainer}>
                 { message.image && <S3Image imgKey = {message.image} style = {{width: width * 0.65, aspectRatio: 4/3, marginBottom: 10}} resizeMode = 'contain' /> }
                 { audioUri && (<MusicPlayer audioUri = {audioUri} />)}
-                { !!message.content && (<Text style = {{color: me ? 'black' : 'white'}}>{deleted ? "deleted message" : message.content}</Text>) }
+                { !!decMsg && (<Text style = {{color: me ? 'black' : 'white'}}>{deleted ? "deleted message" : decMsg}</Text>) }
                 { me && !!message.status && message.status !== "SENT" && (<Ionicons name={message.status == "DELIVERED" ? "checkmark-outline" : "checkmark-done-outline" } size={16} color="white" style = {{marginHorizontal: 5}} />) }
             </View>
         </Pressable>

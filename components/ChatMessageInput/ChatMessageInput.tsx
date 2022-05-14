@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Image } from 'react-native';
+import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Image, Alert } from 'react-native';
 import styles from './styles';
 import { DataStore } from '@aws-amplify/datastore';
 import { Auth, Storage } from 'aws-amplify';
@@ -12,8 +12,9 @@ import 'react-native-get-random-values';
 import { v4 as uuidv4 } from 'uuid';
 import MusicPlayer from '../MusicPlayer';
 import ChatMessage from '../ChatMessage/ChatMessage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PVT_KEY } from '../../screens/Settings';
+import { box } from 'tweetnacl';
+import { useNavigation } from '@react-navigation/native';
+import { encrypt, mySecretKey, strToUint8Array } from '../../utils/crypto';
 
 
 const ChatMessageInput = ({ chatRoom, replyTo, removeReplyTo }) => {
@@ -23,6 +24,8 @@ const ChatMessageInput = ({ chatRoom, replyTo, removeReplyTo }) => {
     const [prog, setProg] = useState(0);
     const [record, setRecord] = useState<Audio.Recording|null>(null);
     const [audioUri, setAudioUri] = useState<string|null>(null);
+
+    const nav = useNavigation();
 
     useEffect(() => {
         (async () => {
@@ -47,13 +50,24 @@ const ChatMessageInput = ({ chatRoom, replyTo, removeReplyTo }) => {
     }
 
     const sendToUser = async (user, userId) => {
-        const ourSecretKey = await AsyncStorage.getItem('')
-        const keyShared = box.before(user.publicKey, ourSecretKey);
+        const sharedKey = await mySecretKey()
+        if(!sharedKey) {
+            return;
+        }
+        if (!user.publicKey) {
+            Alert.alert("User does not have a keypair", "Cannot securely send message until the user has a keypair");
+            return;
+        }
+
+        const userPubKey = strToUint8Array(user.publicKey);
+        const keyShared = box.before(userPubKey, sharedKey);
+
+        const encMsg = encrypt(keyShared, { message });
 
         const newMessage = await DataStore.save(new Message({
-            content: message,
+            content: encMsg,
             userID: userId,
-            forUserId: user.id,
+            forUserID: user.id, 
             chatroomID: chatRoom.id,
             status: "SENT",
             replyToMessageID: replyTo?.id
@@ -64,9 +78,9 @@ const ChatMessageInput = ({ chatRoom, replyTo, removeReplyTo }) => {
     const sendMessage = async () => {
         const currUser = await Auth.currentAuthenticatedUser(); 
         // users in chat room
-        const getUsers = (await DataStore.query(ChatRoomUser)).filter(chatRoomUser => chatRoomUser.chatRoom.id == chatRoom.id).map((chatRoomUser) => chatRoomUser.user);
+        const getUsers = (await DataStore.query(ChatRoomUser)).filter(chatRoomUser => chatRoomUser.chatRoom.id == chatRoom.id).map(chatRoomUser => chatRoomUser.user);
 
-        await Promise.all(getUsers.map(user => sendToUser(user, currUser.attributes.sub)));
+        await Promise.all(getUsers.map((user) => sendToUser(user, currUser.attributes.sub)));
         // const currUser = await Auth.currentAuthenticatedUser(); 
         // const newMessage = await DataStore.save(new Message({
         //     content: message,
@@ -75,7 +89,7 @@ const ChatMessageInput = ({ chatRoom, replyTo, removeReplyTo }) => {
         //     status: "SENT",
         //     replyToMessageID: replyTo?.id
         // }));
-        // reset();
+        reset();
     };
 
     const lastMessageUpdate = async (newMessage) => {

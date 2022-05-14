@@ -2,6 +2,10 @@ import { getRandomBytes } from 'expo-random';
 import { randomBytes, box, setPRNG } from 'tweetnacl';
 import { decode as decodeUTF8, encode as encodeUTF8 } from '@stablelib/utf8';
 import { decode as decodeBase64, encode as encodeBase64 } from '@stablelib/base64';
+import { PVT_KEY } from '../screens/Settings';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
+
 
 export const PRNG = (x, n) => {
     const randBytes = getRandomBytes(n);
@@ -52,5 +56,19 @@ export const decrypt = (secretOrSharedKey, messageWithNonce, key) => {
   return JSON.parse(base64DecryptedMessage);
 };
 
-
 // above code is referenced from https://github.com/dchest/tweetnacl-js/wiki/Examples
+
+
+export const strToUint8Array = (string) => Uint8Array.from(string.split(',').map((str) => parseInt(str)));
+
+export const mySecretKey = async () => {
+  const stringKey = await AsyncStorage.getItem(PVT_KEY);
+  if(!stringKey) {
+    Alert.alert("Set your key pair before sending messages", "Go to setting to set key pair", [{
+      text: "Settings",
+      onPress: () => nav.navigate("Settings")
+    }]);
+    return;
+  }
+  return strToUint8Array(stringKey);
+}

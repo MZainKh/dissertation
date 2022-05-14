@@ -50,7 +50,9 @@ export default function ChatScreen() {
         if(!chatRoom) {
             return;
         }
-        const gotMessages = await DataStore.query(Message, message => message.chatroomID("eq", chatRoom?.id), {
+        const currAuthUser = await Auth.currentAuthenticatedUser();
+        const me = currAuthUser.attributes.sub;
+        const gotMessages = await DataStore.query(Message, message => message.chatroomID("eq", chatRoom?.id).forUserID('eq', me), {
             sort: message => message.createdAt(SortDirection.DESCENDING)
         });
         setMessages(gotMessages);
