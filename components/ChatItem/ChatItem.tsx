@@ -8,7 +8,7 @@ import { Auth } from 'aws-amplify';
 import moment from 'moment';
 
 export default function ChatItem({ chatRoom }) {
-    const [users, setUsers] = useState<User[]>([]); // all the users in the chatRoom
+    // const [users, setUsers] = useState<User[]>([]); // all the users in the chatRoom
     const [user, setUser] = useState<User|null>(null); // displayed user
     const [lastMsg, setLastMsg] = useState<Message|undefined>(); // for displaying lastMessage on homescreen
 
@@ -17,7 +17,7 @@ export default function ChatItem({ chatRoom }) {
     useEffect(() => {
         const getUsers = async () => {
             const gotUsers = (await DataStore.query(ChatRoomUser)).filter(ChatRoomUser => ChatRoomUser.chatRoom.id == chatRoom.id).map((ChatRoomUser) => ChatRoomUser.user);
-            setUsers(gotUsers);
+            // setUsers(gotUsers);
             const currAuthUser = await Auth.currentAuthenticatedUser();
             setUser(gotUsers.find((user) => user.id !== currAuthUser.attributes.sub) || null);
         };

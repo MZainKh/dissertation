@@ -1,5 +1,5 @@
 import { getRandomBytes } from 'expo-random';
-import { randomBytes, box } from 'tweetnacl';
+import { randomBytes, box, setPRNG } from 'tweetnacl';
 import { decode as decodeUTF8, encode as encodeUTF8 } from '@stablelib/utf8';
 import { decode as decodeBase64, encode as encodeBase64 } from '@stablelib/base64';
 
@@ -11,6 +11,8 @@ export const PRNG = (x, n) => {
       i++;
     }
 };
+
+setPRNG(PRNG);
 
 const newNonce = () => getRandomBytes(box.nonceLength);
 export const generateKeyPair = () => box.keyPair();
@@ -43,7 +45,7 @@ export const decrypt = (secretOrSharedKey, messageWithNonce, key) => {
     : box.open.after(message, nonce, secretOrSharedKey);
 
   if (!decrypted) {
-    throw new Error('Could not decrypt message');
+    throw new Error('Message could not be decrypted');
   }
 
   const base64DecryptedMessage = decodeUTF8(decrypted);

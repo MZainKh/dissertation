@@ -9,6 +9,7 @@ import { User } from '../src/models';
 export const PVT_KEY = "PVT_KEY";
 
 const Settings = () => {
+    // sign out function
     const signOut = async () => {
         await DataStore.clear();
         Auth.signOut();
@@ -39,7 +40,7 @@ const keypairUpdate = async () => {
       <Text>Settings</Text>
 
       <Pressable onPress = {keypairUpdate} style = {{backgroundColor: '#008080', height: 50, margin: 10, borderRadius: 50, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Update Key Pair</Text>
+        <Text>Key Pair Update</Text>
       </Pressable>
 
       <Pressable onPress = {signOut} style = {{backgroundColor: '#008080', height: 50, margin: 10, borderRadius: 50, alignItems: 'center', justifyContent: 'center'}}>

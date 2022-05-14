@@ -14,12 +14,10 @@ import { Message, User } from './src/models';
 import moment from 'moment';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 
-import { setPRNG, box } from "tweetnacl";
-import { PRNG, generateKeyPair, encrypt, decrypt } from './utils/crypto';
+import { box } from "tweetnacl";
+import { generateKeyPair, encrypt, decrypt } from './utils/crypto';
 
 Amplify.configure(awsconfig);
-
-setPRNG(PRNG);
 
 const obj = { hello: 'world' };
 const pairA = generateKeyPair();
